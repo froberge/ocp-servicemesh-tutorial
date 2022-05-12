@@ -39,8 +39,7 @@ __Egress__
     customer => preference => recommendation v3 2022-05-11T16:58+02:00 from 'recommendation-v3-5c858b8c9d-vlnth': 10
     ```
 
-__CLEAN UP__
-Enlevons les éléments créer pour continuer la démo.
+:construction: __CLEAN UP__
 ```
 oc delete serviceentry worldclockapi-egress-rule -n demo
 ```
@@ -138,8 +137,7 @@ Istio nous permet de définir qui a accèes a quoi, faisons une example qui déf
     exit
     ```
 
-__CLEAN UP__
-Enlevons les éléments créer pour continuer la démo.
+:construction: __CLEAN UP__
 ```
 ./scripts/cleanup-security-policy.sh
 ```
@@ -182,8 +180,8 @@ Pouvoir permettent seulement au usagé qui on une authentication valide de conne
     customer => preference => recommendation v2 from '6c468ccf49-9wmv5': 3
     ```
 
-__CLEAN UP__
-Enlevons les éléments créer pour continuer la démo.
+:construction: __CLEAN UP__
+
 ```
 oc delete  requestauthentication customerjwt -n demo
 ```

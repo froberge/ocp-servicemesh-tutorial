@@ -88,7 +88,7 @@ __Déploiement Canary - Partage du traffic entre v1 et v2__
 
 __Routing intelligent basé sur le user-agent header__
 
-:star: Le header "user-agent" est ajouté au OpenTracing baggage dans le service Customer. Il est par la suite propagé automatiquement à tout les downstream services.
+:information_source: Le header "user-agent" est ajouté au OpenTracing baggage dans le service Customer. Il est par la suite propagé automatiquement à tout les downstream services.
 
 * Créons la destination rule
     ```
@@ -99,7 +99,7 @@ __Routing intelligent basé sur le user-agent header__
      oc apply -f manifest/istio/virtualservice-recommendation-browser.yaml
     ```
 
-* Faire un appel en utilisant le user-agent
+* Test 1
     ```
     curl -A Safari $GATEWAY_URL/customer
     ```
@@ -109,6 +109,7 @@ __Routing intelligent basé sur le user-agent header__
     customer => preference => recommendation v2 from .....
     ```
 
+* Test 2
     ```
     curl -A Firefox $GATEWAY_URL/customer
     ```
@@ -127,7 +128,7 @@ __Routing intelligent basé sur le user-agent header__
 
 __Mirroring__
 
-Le `mirroring` du traffic, aussi appelé `shadowing` est un concept puissant dans istio. IL permet au d'apporter des nouvelles fonctionnalitées en production en limitant les risques. En effet le `mirroring` consiste a envoyer un copy du traffic live à un service sélectionné, sans impater le services primaire.
+Le `mirroring` du traffic, aussi appelé `shadowing` est un concept puissant dans istio. IL permet aux équipes de développement d'apporter des nouvelles fonctionnalitées en production en limitant les risques. En effet le `mirroring` consiste à envoyer une copie du traffic en temps réel à un service sélectionné, sans impater le service primaire.
 
 * Créons la destination rule
     ```
@@ -138,7 +139,7 @@ Le `mirroring` du traffic, aussi appelé `shadowing` est un concept puissant dan
     ```
      oc apply -f manifest/istio/virtualservice-recommendation-mirror_v1_v2.yaml
     ```
-* Faire un appel
+* Test
     ```
     curl $GATEWAY_URL/customer
     ```
@@ -161,13 +162,13 @@ Le `mirroring` du traffic, aussi appelé `shadowing` est un concept puissant dan
 
 __Load Balancer__
 
-Commen mentionné au paravent, OpenShift utilise la politique de Round Robin par défaut. Avec les Service Mesh nous pouvons facilement le changer. Il suivi d'introduire la bonne destination rule.
+Commen mentionné, OpenShift utilise la politique de Round Robin par défaut. Avec le Service Mesh nous pouvons facilement le changer. Il suivi d'introduire la bonne destination rule.
 
 ```
 oc apply -f manifest/istio/destinationrule-recommendation-lb_random.yaml
 ```
 
-:clipboard: En scalant la version v2 a 2 replicas on voit encore mieux le random.
+:zap: En scalant la version v2 à 2 replicas on voit encore mieux le random.
 
 :construction: __CLEAN UP__
 ```
