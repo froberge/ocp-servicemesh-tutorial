@@ -57,7 +57,7 @@ ___
 
 * Récupérons URL du gateway dans un variable
     ``` 
-    export GATEWAY_URL=$(kubectl get route istio-ingressgateway -n istio-system -o=jsonpath="{.spec.host}")
+    export GATEWAY_URL=$(oc get route istio-ingressgateway -n istio-system -o=jsonpath="{.spec.host}")
     ```
 
 * On peut maintenant faire un test en essayant d'accéder le endpoint.
