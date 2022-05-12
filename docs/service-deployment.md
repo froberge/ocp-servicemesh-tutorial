@@ -1,10 +1,8 @@
 # Déploiement des Services
 
-Pour commencez nous devons mettre en place le project dans OpenShift sous lequel nous allons:
-* Faire les déploiement.
-* Mettre en place Istio
+Pour commencez nous devons mettre en place un project dans OpenShift.
 
-Les service utilisé viendrons d'images déjà fabriqué qui se trouve [Quay.io](quay.io/rhdevelopers).
+Les service utilisé viendrons d'images qui se trouve sur [Quay.io](quay.io/rhdevelopers).
 * [Customer](https://quay.io/rhdevelopers/istio-tutorial-customer)
 * [Preference](https://quay.io/rhdevelopers/istio-tutorial-preference)
 * [Recommendation](https://quay.io/rhdevelopers/istio-tutorial-recommendation)
@@ -15,19 +13,18 @@ Les service utilisé viendrons d'images déjà fabriqué qui se trouve [Quay.io]
     * `Nom:` demo
     * `Display:` Project pour demo ServiceMesh
 
-    Image de la création du project à partir de l'interface Web.
     ![create-project](images/createproject.png)
 
 
-2. Ajoutez le nouveau project au service mesh. Pour ce faire nous allons modifier le Member Roll.
+2. Ajoutez le project à la Mesh. Pour ce faire nous devons l'ajouter au `Member Roll`.
 
-* À partir du UI nous devons aller dans __Intaslled Operator__
-* Dans le project _istio-system_, selectionner l'operator __Red Hat OpenShift Service Mesh__
-* Allez dans l'onglet __Istio Servicw Mesh Member Roll__
-* Selectionnez __SMMR default__
-* En haut a droite, sélectionnez __Edit Service MeshMemberRoll__. Ceci vous ouvre le yaml
-* Dans la section __members__ sous spec, ajouté le nom du projet __demo__ .
-Le yaml devrait ressemblez a celui-ci.
+À partir du UI:
+* Allez dans `Intaslled Operator`
+* Dans le project `istio-system`, selectionner l'operator `Red Hat OpenShift Service Mesh`
+* Allez dans l'onglet `Istio Servicw Mesh Member Roll`
+* Selectionnez `SMMR default`
+* En haut a droite, sélectionnez `Edit Service MeshMemberRoll`.
+* Dans le yaml, sous la _members_ dans spec, ajouté le nom du projet: __demo__ 
     ```
     ...
     spec:
@@ -37,7 +34,7 @@ Le yaml devrait ressemblez a celui-ci.
     ...
     ```
 
-* Faire __Save__.
+* __Save__.
 ___
 
 ## Déploiement de Customer
@@ -50,27 +47,27 @@ ___
     ``` 
     oc create -f manifest/kubernetes/customer/service.yaml -n demo
     ```
-* Nous devons exposer le service customer, pour permettre a l'utilisateur d'intéragir avec. Nous allons donc créer le Gateway
+* Nous devons exposer le service customer avec un Gateway, pour permettre les accès en ingress aux l'utilisateurs.
     ``` 
     oc create -f manifest/kubernetes/customer/gateway.yaml -n demo
     ```
 
-* Récupérons URL du gateway dans un variable
+* Récupérons URL du gateway dans un variable pour facililer les intéreaction plus tard.
     ``` 
     export GATEWAY_URL=$(oc get route istio-ingressgateway -n istio-system -o=jsonpath="{.spec.host}")
     ```
 
-* On peut maintenant faire un test en essayant d'accéder le endpoint.
+* Test
     ``` 
     curl $GATEWAY_URL/customer
     ```
 
-    On devrait recevoir le message d'error suivant:
+    Résultat
     ```
     customer =``` UnknownHostException: preference
     ```
 
-* On peut aussi faire une révision des logs pour voir l'erreur.
+* Accédons les logs pour voir l'erreur.
     ``` 
     stern "customer-\w" -c customer
     ```
@@ -87,17 +84,17 @@ ___
     oc create -f manifest/kubernetes/preference/service.yaml -n demo
     ```
 
-* On peut maintenant faire un test en essayant d'accéder le endpoint.
+* Test
     ``` 
     curl $GATEWAY_URL/customer
     ```
 
-    On devrait recevoir le message d'error suivant:
+    Résultat
     ```
     customer =``` Error: 503 - preference =``` UnknownHostException: recommendation
     ```
 
-* On peut aussi faire une révision des logs pour voir l'erreur.
+* Accédons les logs pour voir l'erreur.
     ``` 
     stern "preference-\w" -c preference
     ```
@@ -120,18 +117,18 @@ ___
     curl $GATEWAY_URL/customer
     ```
 
-    On devrait recevoir le message suivant:
+    Résultat
     ```
     customer =``` preference =``` recommendation v1 from 'recommendation-v1-6cf5ff55d9-7zbj8': 1
     ```
 
-* On peut aussi faire une révision des logs pour voir l'erreur.
+* Accédons les logs pour voir l'erreur.
     ``` 
     stern "recommendation-\w" -c recommendation
     ```
 
 
 ---
-Maintenant que nous avons installé la Service Mesh, créer le porject et installer 3 différents applications. Amusons nous avec la ServiceMesh pour bien comprendre ses capacitées.
+Maintenant que nous avons des application dans notre projet, regardons les différents outils qui observe la Service Mesh.
 
 [Démo Obervabilité](observability.md)

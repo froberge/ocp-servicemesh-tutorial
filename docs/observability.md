@@ -1,33 +1,33 @@
 # Observabilité
 
-Commençons par générer du traffic au niveau de l'application en utilisant le scripts suivant.
+Générons traffic au niveau de l'application en utilisant le scripts suivant.
 ```
 ./scripts/run.sh $GATEWAY_URL/customer
 ``` 
 
 ## Observabilité
 
-__NOTE:__  Les url pour les différent dashboards requis pous la section observabitlité se trouve au niveau de `Networking -> Routes`
+:checkered_flag: Les url pour les différent dashboards requis pous la section observabitlité se trouve au niveau de `Networking -> Routes`
 
 
 ### Grafana & Prometheus.
-Par défautl la plateforme nous donne du monitoring avec `Prometheus` et `Grafana
+Par défaut la plateforme nous donne du monitoring avec `Prometheus` et `Grafana`
 
 #### Grafana
 
-Plusieurs dashboard sont accessible par default.
+Plusieurs dashboard sont accessible par défaut.
 
-Example 1: Istio mesh
+Istio mesh
 ![mesh-grafana](images/istio-mesh-grafana.png)
 
-Example 2: Istio control plane
+Istio control plane
 ![mesh-grafana](images/istio-control-grafana.png)
 
 #### Prometheus
 
-* Il existe maintant 2 Prometheus. Les deux permettent de scpecifier des metrics customs.
+* Il existe 2 Prometheus. Les deux permettent de scpécifier des metrics customs.
 
-1. Celui de la plateform Openshift ou nous pouvons executer des commande de type:
+1. Celui de Openshift ou nous pouvons executer des commande de type:
     ```
     container_memory_rss{namespace="demo",container=~"customer|preference|recommendation"}
     ```
@@ -40,21 +40,21 @@ Example 2: Istio control plane
 
 ### Tracing
 
-Avec Istio nous avons installé `Jaeger` pour le Open Tracing. Comme nous service utilise les librairing d'open tracing, nous pouvons les capters en utilisans `Jaeger`.  Istio envoie automatiquement les donn/e de tracage connecter a `Jaeger`.
+Avec Istio nous avons installé `Jaeger` pour le Open Tracing. Comme nos services utilise les librairing d'Open Tracing, nous pouvons les capters en utilisant `Jaeger`. Istio envoie automatiquement les données de tracage à `Jaeger`.
 
 ![jaeger-ui](images/jaeger-ui.png)
 
 
 ### Kiali
 
-Kiali utilise le données qui sont fourni par Istio et OpenShift pour générer la visualisation. Comme c'est un service nous avons aucun changement a faire èa Istio ou OpenShift une fois l'operator installé.
+Kiali utilise le données qui sont fourni par Istio et OpenShift pour générer la visualisation topographique. Comme c'est un service nous avons aucun changement à faire à Istio ou OpenShift autre qu'installer l'opérateur.
 
 
-#### Service Graph
+__Service Graph__
 ![service-graph](images/kiali-1.png)
 
-A partir de Kiali on peut avoir plein information sur:
-* Les Application
+A partir de Kiali on peut avoir des informations sur:
+* Les Applications
 * Les Workloads
 * Les Services
 
