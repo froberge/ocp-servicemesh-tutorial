@@ -7,7 +7,6 @@ Les service utilisé viendrons d'images qui se trouve sur [Quay.io](quay.io/rhde
 * [Preference](https://quay.io/rhdevelopers/istio-tutorial-preference)
 * [Recommendation](https://quay.io/rhdevelopers/istio-tutorial-recommendation)
 
-
 ## Mise en place du projet.
 1. Créer un project avec les infirmations suivantes.
     * `Nom:` demo
@@ -35,6 +34,13 @@ Les service utilisé viendrons d'images qui se trouve sur [Quay.io](quay.io/rhde
     ```
 
 * __Save__.
+___
+
+## Définitions importantes.
+* `Gateway:` Le load balancer qui est au edge de la Mesh et qui accepte le traffic qui entre/sort soit en TCP ou HTTP connections.
+* `Virtual Services`: Sert a diriger le traffic dans la mesh a partir du gateway vers les applications, ou d'un service vers un autre service en applicant les politiques
+* `Destination Rules:` Représente les régles a appliquer sur le trafic, comme les TLS setting ou le circuit braking.
+
 ___
 
 ## Déploiement de Customer
