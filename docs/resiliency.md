@@ -1,4 +1,4 @@
-# Resilience des services
+# Résilience des services
 
 ---
 __Retry__
