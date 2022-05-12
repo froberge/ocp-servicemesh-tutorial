@@ -1,24 +1,24 @@
 # Sécurité
 
 ---
+
+Le ServiceMesh controle comment les services peuvent-être accédé de l'extérieur (Ingress) ainsi que comment les services peuvent accéder des API externe (egress). 
+
 __Egress__
+* Pour pouvoir accéder à l'extérieur de la mesh, on applique une règle d'accès.
 
-* Le ServiceMesh controle comment les services peuvent-être accédé de l'extérieur (Ingress) ainsi que comment les services peuvent accéder des API externe (egress). 
-
-* Pour pouvoir accéder on doit appliqué un règles qui nous permets d'accéder l'extérieur.
-
-* Pour cette example nous allons déployé une 3ieme version du service recommendation et envoyé tout le traffic vers v3.
+* Déployons une 3ieme version de recommendation qui accède un service à l'extérieur de la Mesh.
 
 * Créons la destination rule
     ```
     oc apply -f manifest/istio/destinationrule-recommendation_v1_v2_v3.yaml
     ```
-* Créons le virtual service
+* Créons le virtual service pour envoyé 100% du traffic vers v3.
     ```
-     oc apply -f manifest/istio/virtualservice-recommendation-browser.yaml
+    oc apply -f manifest/istio/virtualservice-recommendation_v3.yaml
     ```
 
-* Faire un appel
+* Test
     ```
     curl $GATEWAY_URL/customer
     ```
@@ -28,7 +28,7 @@ __Egress__
     customer => Error: 503 - preference => Error: 500 - <!doctype html> ....
     ```
 
-* Ajoutons maintenant un service entry pour permettre au service d'accéder l'extérieur.
+* Ajoutons un service entry pour permettre au service d'accéder l'extérieur.
 
     ```
     oc apply -f manifest/istio/serviceentry-worldclockapi-egress.yaml
@@ -60,7 +60,7 @@ Istio nous permet de définir qui a accèes a quoi, faisons une example qui déf
     ```
     oc apply -f manifest/istio/policies/authorizationpolicy-deny-all.yaml -n demo
     ```
-* Faire un appel
+* Test
     ```
     curl $GATEWAY_URL/customer
     ```
@@ -76,7 +76,7 @@ Istio nous permet de définir qui a accèes a quoi, faisons une example qui déf
     oc apply -f manifest/istio/policies/authorizationpolicy-allow-customer.yaml -n demo
     ```
 
-    Call
+    Test
     ```
     curl $GATEWAY_URL/customer
     ```
@@ -92,7 +92,7 @@ Istio nous permet de définir qui a accèes a quoi, faisons une example qui déf
     oc apply -f manifest/istio/policies/authorizationpolicy-allow-preference.yaml -n demo
     ```
 
-    Call
+    Test
     ```
     curl $GATEWAY_URL/customer
     ```
@@ -108,7 +108,7 @@ Istio nous permet de définir qui a accèes a quoi, faisons une example qui déf
     oc apply -f manifest/istio/policies/authorizationpolicy-allow-recommendation.yaml -n demo
     ```
 
-    Call
+    Test
     ```
     curl $GATEWAY_URL/customer
     ```
@@ -118,24 +118,24 @@ Istio nous permet de définir qui a accèes a quoi, faisons une example qui déf
     customer => preference => recommendation v1 from 'recommendation-v1-dd8544f7c-rv6cf': 1
     ```
 
-`Validé un autre path qui est pas permisÈ
+* `Validation d'un autre path qui n'est pas permis`
 
-* À partir de recommendation allons vers préférence.
-    ```
-    oc exec -it -n demo $(oc get pods -n demo | grep recommendation-v2 |awk '{ print $1 }'|head -1) -c recommendation /bin/bash
-    ```
+    * À partir de recommendation allons vers préférence.
+        ```
+        oc exec -it -n demo $(oc get pods -n demo | grep recommendation-v2 |awk '{ print $1 }'|head -1) -c recommendation /bin/bash
+        ```
 
-    ```
-    curl preference:8080
-    ```
-    
-    Résultat
-    ```
-    RBAC: access denied
-    ```
-    ```
-    exit
-    ```
+        ```
+        curl preference:8080
+        ```
+        
+        Résultat
+        ```
+        RBAC: access denied
+        ```
+        ```
+        exit
+        ```
 
 :construction: __CLEAN UP__
 ```
@@ -145,14 +145,14 @@ Istio nous permet de définir qui a accèes a quoi, faisons une example qui déf
 
 __Authentication JWT__
 
-Pouvoir permettent seulement au usagé qui on une authentication valide de connecter a notre application est un scénation courant au niveau des systèmes distribué.
+Pouvoir permettent seulement le traffic qui a une token authentication valide de se connecter à notre application est un scénario courant au niveau des applicaiton microservice.
 
-* Définissons un requête d'authentification
+* Définissons une requête d'authentification
     ```
     oc apply -f manifest/istio/enduser-authentication-jwt.yaml -n demo
     ```
 
-* Faire un appel
+* Test
     ```
     curl $GATEWAY_URL/customer -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkRIRmJwb0lVcXJZOHQyenBBMnFYZkNtcjVWTzVaRXI0UnpIVV8tZW52dlEiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjQ2ODU5ODk3MDAsImZvbyI6ImJhciIsImlhdCI6MTUzMjM4OTcwMCwiaXNzIjoidGVzdGluZ0BzZWN1cmUuaXN0aW8uaW8iLCJzdWIiOiJ0ZXN0aW5nQHNlY3VyZS5pc3Rpby5pbyJ9.CfNnxWP2tcnR9q0vxyxweaF3ovQYHYZl82hAUsn21bwQd9zP7c-LS9qd_vpdLG4Tn1A15NxfCjp5f7QNBUo-KC9PJqYpgGbaXhaGx7bEdFWjcwv3nZzvc7M__ZpaCERdwU7igUmJqYGBYQ51vr2njU9ZimyKkfDe3axcyiBZde7G6dabliUosJvvKOPcKIWPccCgefSj_GNfwIip3-SsFdlR7BtbVUcqR-yv-XOxJ3Uc1MI0tz3uMiiZcyPV7sNCU4KRnemRIMHVOfuvHsU60_GhGbiSFzgPTAa9WTltbnarTbxudb_YEOx12JiwYToeX0DCPb43W1tzIBxgm8NxUU"
     ```
@@ -161,9 +161,9 @@ Pouvoir permettent seulement au usagé qui on une authentication valide de conne
     ```
     Jwt verification fails
     ```
-:WARNING: La connection n'est pas possible car ce n'est pas une token valide.
+:warning: La connection n'est pas possible car ce n'est pas une token valide.
 
-* Faire un appel avec un Token valide
+* Test avec un token valide
     ```
     token=$(curl https://gist.githubusercontent.com/lordofthejars/a02485d70c99eba70980e0a92b2c97ed/raw/f16b938464b01a2e721567217f672f11dc4ef565/token.simple.jwt -s)
     ```
