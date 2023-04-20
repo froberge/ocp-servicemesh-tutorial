@@ -25,6 +25,10 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - env:
         - name: JAVA_OPTIONS
@@ -67,4 +71,8 @@ spec:
           timeoutSeconds: 1
         securityContext:
           privileged: false
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
       serviceAccount: "recommendation"

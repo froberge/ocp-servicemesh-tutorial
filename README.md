@@ -5,7 +5,7 @@ Bienvenue dans l'atelier de travail sur [Red Hat OpenShift Service Mesh](https:/
 ---
 ## Table des matières
  * [Installation des opérateurs et configuration de la Mesh](https://github.com/froberge/howto-ocp-servicemesh-setup/)
- * [Pratique](#turotial)
+ * [Pratique](#contenu)
  
 
 ## Pratique
